@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:title" content="Eesti Inflatsiooni Kalkulaator 2018–2026">
-<meta property="og:description" content="Vaata, kui palju on sinu palga ostujõud alates 2018. aastast langenud.">
+<meta property="og:title" content="Eesti Inflatsiooni Kalkulaator 2010–2026">
+<meta property="og:description" content="Vaata, kui palju on sinu palga ostujõud alates 2010. aastast langenud.">
 <title>Eesti Inflatsiooni Kalkulaator</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -299,7 +299,7 @@ overflow: hidden;
 transition: max-height 0.5s ease;
 }
 .table-content.open {
-max-height: 600px;
+max-height: 900px;
 }
 
 .inflation-table {
@@ -383,6 +383,11 @@ h1 { font-size: 1.35rem; }
       <input type="number" id="salary" placeholder="nt 2500" min="0" step="50" oninput="calculate()">
     </div>
     <select class="year-select" id="startYear" onchange="calculate()">
+      <option value="2010">2010</option>
+      <option value="2011">2011</option>
+      <option value="2012">2012</option>
+      <option value="2013">2013</option>
+      <option value="2014">2014</option>
       <option value="2015">2015</option>
       <option value="2016">2016</option>
       <option value="2017">2017</option>
@@ -454,7 +459,7 @@ h1 { font-size: 1.35rem; }
       <div class="table-note">
         THI = tarbijahinnaindeks (CPI). Aastamäärad põhinevad Maailmapanga ja Macrotrends andmetel.
         <br>2026 näitab hinnangulist inflatsiooni jaanuar–märts 2026 (~3,4% aastases tempos).
-        <br>Kumulatiivne inflatsioon näitab, kui palju on hinnad kokku tõusnud alates 2015. aastast.
+        <br>Kumulatiivne inflatsioon näitab, kui palju on hinnad kokku tõusnud alates 2010. aastast.
       </div>
     </div>
   </div>
@@ -463,6 +468,11 @@ h1 { font-size: 1.35rem; }
 <script>
   // Annual CPI inflation rates for Estonia
   const rates = {
+    2010: 0.0270,
+    2011: 0.0510,
+    2012: 0.0420,
+    2013: 0.0350,
+    2014: 0.0050,
     2015: 0.0010,
     2016: 0.0080,
     2017: 0.0370,
@@ -529,7 +539,7 @@ h1 { font-size: 1.35rem; }
   }
 
   function buildTable() {
-    const years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
+    const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
     const labels = {
       2026: '2026 (jan–märts)'
     };
