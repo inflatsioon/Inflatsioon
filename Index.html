@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="Eesti Inflatsiooni Kalkulaator 2018–2026">
+<meta property="og:description" content="Vaata, kui palju on sinu palga ostujõud alates 2018. aastast langenud.">
+<title>Eesti Inflatsiooni Kalkulaator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: #0c0f1a;
+color: #e8e6e1;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+overflow-x: hidden;
+}
+
+body::before {
+content: ‘’;
+position: fixed;
+top: -50%; left: -50%;
+width: 200%; height: 200%;
+background: radial-gradient(ellipse at 30% 20%, rgba(220, 60, 60, 0.06) 0%, transparent 50%),
+radial-gradient(ellipse at 70% 80%, rgba(60, 80, 180, 0.05) 0%, transparent 50%);
+z-index: 0;
+pointer-events: none;
+}
+
+.card {
+position: relative;
+z-index: 1;
+width: 100%;
+max-width: 480px;
+background: linear-gradient(165deg, #14182a 0%, #1a1e32 100%);
+border: 1px solid rgba(255,255,255,0.06);
+border-radius: 24px;
+padding: 40px 32px 36px;
+box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+
+.flag-bar {
+display: flex;
+gap: 0;
+height: 4px;
+border-radius: 4px;
+overflow: hidden;
+margin-bottom: 28px;
+}
+.flag-bar span:nth-child(1) { flex: 1; background: #0072ce; }
+.flag-bar span:nth-child(2) { flex: 1; background: #000; }
+.flag-bar span:nth-child(3) { flex: 1; background: #fff; }
+
+h1 {
+font-family: ‘DM Serif Display’, serif;
+font-size: 1.65rem;
+color: #fff;
+margin-bottom: 6px;
+letter-spacing: -0.02em;
+line-height: 1.2;
+}
+
+.subtitle {
+font-size: 0.85rem;
+color: rgba(255,255,255,0.35);
+margin-bottom: 32px;
+font-weight: 400;
+}
+
+label {
+display: block;
+font-size: 0.75rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+color: rgba(255,255,255,0.4);
+margin-bottom: 10px;
+}
+
+.input-row {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 12px;
+}
+
+.input-wrap {
+flex: 1;
+position: relative;
+}
+
+.input-wrap input {
+width: 100%;
+background: rgba(255,255,255,0.04);
+border: 1.5px solid rgba(255,255,255,0.08);
+border-radius: 14px;
+padding: 16px 20px 16px 36px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 1.35rem;
+font-weight: 700;
+color: #fff;
+outline: none;
+transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.input-wrap input:focus {
+border-color: rgba(100, 140, 255, 0.4);
+box-shadow: 0 0 0 4px rgba(100, 140, 255, 0.08);
+}
+
+.input-wrap .euro-sign {
+position: absolute;
+left: 16px;
+top: 50%;
+transform: translateY(-50%);
+font-size: 1.1rem;
+font-weight: 600;
+color: rgba(255,255,255,0.25);
+pointer-events: none;
+}
+
+.year-select {
+background: rgba(255,255,255,0.04);
+border: 1.5px solid rgba(255,255,255,0.08);
+border-radius: 14px;
+padding: 16px 16px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 1rem;
+font-weight: 600;
+color: #fff;
+outline: none;
+cursor: pointer;
+appearance: none;
+min-width: 100px;
+text-align: center;
+transition: border-color 0.25s;
+}
+.year-select:focus {
+border-color: rgba(100, 140, 255, 0.4);
+}
+.year-select option {
+background: #1a1e32;
+color: #fff;
+}
+
+.results {
+margin-top: 28px;
+opacity: 0;
+transform: translateY(8px);
+transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.results.visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+.divider {
+height: 1px;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+margin-bottom: 24px;
+}
+
+.result-block {
+margin-bottom: 22px;
+}
+
+.result-label {
+font-size: 0.7rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.12em;
+color: rgba(255,255,255,0.3);
+margin-bottom: 6px;
+}
+
+.result-value {
+font-family: ‘DM Serif Display’, serif;
+font-size: 2rem;
+color: #fff;
+letter-spacing: -0.02em;
+}
+
+.result-value.loss {
+color: #e8564a;
+}
+
+.result-value.need {
+color: #5ec4a0;
+}
+
+.bar-container {
+margin: 24px 0;
+position: relative;
+}
+
+.bar-bg {
+height: 10px;
+background: rgba(255,255,255,0.05);
+border-radius: 10px;
+overflow: hidden;
+position: relative;
+}
+
+.bar-fill {
+height: 100%;
+border-radius: 10px;
+background: linear-gradient(90deg, #e8564a, #d43d31);
+transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+position: relative;
+}
+
+.bar-fill::after {
+content: ‘’;
+position: absolute;
+right: 0; top: -3px; bottom: -3px;
+width: 3px;
+background: #fff;
+border-radius: 3px;
+box-shadow: 0 0 10px rgba(232, 86, 74, 0.6);
+}
+
+.bar-labels {
+display: flex;
+justify-content: space-between;
+margin-top: 8px;
+font-size: 0.72rem;
+color: rgba(255,255,255,0.3);
+font-weight: 500;
+}
+
+.inflation-pct {
+display: inline-block;
+font-size: 0.8rem;
+font-weight: 700;
+color: #e8564a;
+background: rgba(232, 86, 74, 0.1);
+border: 1px solid rgba(232, 86, 74, 0.15);
+padding: 4px 12px;
+border-radius: 20px;
+margin-left: 10px;
+vertical-align: middle;
+}
+
+.footnote {
+margin-top: 20px;
+font-size: 0.68rem;
+color: rgba(255,255,255,0.2);
+line-height: 1.5;
+}
+
+.footnote a {
+color: rgba(100, 140, 255, 0.5);
+text-decoration: none;
+}
+
+@media (max-width: 500px) {
+.card { padding: 28px 20px 28px; }
+h1 { font-size: 1.35rem; }
+.result-value { font-size: 1.6rem; }
+.input-wrap input { font-size: 1.15rem; padding: 14px 16px 14px 32px; }
+.euro-sign { left: 12px; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+  <div class="flag-bar"><span></span><span></span><span></span></div>
+
+  <h1>Palga ostujõu kalkulaator</h1>
+  <p class="subtitle">Kui palju on inflatsioon sinu palgast ära söönud?</p>
+
+<label>Sinu neto palk aastal</label>
+
+  <div class="input-row">
+    <div class="input-wrap">
+      <span class="euro-sign">€</span>
+      <input type="number" id="salary" placeholder="nt 2500" min="0" step="50" oninput="calculate()">
+    </div>
+    <select class="year-select" id="startYear" onchange="calculate()">
+      <option value="2015">2015</option>
+      <option value="2016">2016</option>
+      <option value="2017">2017</option>
+      <option value="2018" selected>2018</option>
+      <option value="2019">2019</option>
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+    </select>
+  </div>
+
+  <div class="results" id="results">
+    <div class="divider"></div>
+
+```
+<div class="result-block">
+  <div class="result-label">Kumulatiivne inflatsioon</div>
+  <div class="result-value" id="inflationPct">—</div>
+</div>
+
+<div class="result-block">
+  <div class="result-label">Sama ostujõud täna eeldab palka</div>
+  <div class="result-value need" id="neededSalary">—</div>
+</div>
+
+<div class="bar-container">
+  <div class="bar-bg">
+    <div class="bar-fill" id="barFill" style="width: 0%"></div>
+  </div>
+  <div class="bar-labels">
+    <span id="barOrig">Reaalne väärtus</span>
+    <span id="barTarget">Vajaminev palk</span>
+  </div>
+</div>
+
+<div class="result-block">
+  <div class="result-label">Ostujõu kaotus kuus</div>
+  <div class="result-value loss" id="lostAmount">—</div>
+</div>
+
+<div class="footnote">
+  Allikad: Macrotrends / Maailmapank (CPI aastamäärad), Trading Economics.
+  <br>Arvutus: kumulatiivne THI inflatsioon kuni märts 2026.
+</div>
+```
+
+  </div>
+</div>
+
+<script>
+  // Annual CPI inflation rates for Estonia
+  const rates = {
+    2015: 0.0010,
+    2016: 0.0080,
+    2017: 0.0370,
+    2018: 0.0340,
+    2019: 0.0230,
+    2020: -0.0040,
+    2021: 0.0465,
+    2022: 0.1940,
+    2023: 0.0916,
+    2024: 0.0350,
+    2025: 0.0510,
+    2026: 0.0085  // ~3.4% annualised, pro-rated Jan-Mar
+  };
+
+  function getCumulativeInflation(fromYear) {
+    let multiplier = 1;
+    for (let y = fromYear + 1; y <= 2026; y++) {
+      if (rates[y] !== undefined) {
+        multiplier *= (1 + rates[y]);
+      }
+    }
+    return multiplier;
+  }
+
+  function formatEur(n) {
+    return n.toLocaleString('et-EE', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' €';
+  }
+
+  function calculate() {
+    const salary = parseFloat(document.getElementById('salary').value);
+    const startYear = parseInt(document.getElementById('startYear').value);
+    const resultsEl = document.getElementById('results');
+
+    if (!salary || salary <= 0) {
+      resultsEl.classList.remove('visible');
+      return;
+    }
+
+    const multiplier = getCumulativeInflation(startYear);
+    const pctChange = (multiplier - 1) * 100;
+    const neededSalary = salary * multiplier;
+    const lost = neededSalary - salary;
+
+    document.getElementById('inflationPct').innerHTML =
+      '+' + pctChange.toFixed(1) + '%' +
+      ' <span style="font-family:DM Sans;font-size:0.8rem;color:rgba(255,255,255,0.3);font-weight:500;">alates ' + startYear + '</span>';
+
+    document.getElementById('neededSalary').textContent = formatEur(neededSalary);
+    document.getElementById('lostAmount').textContent = '−' + formatEur(lost);
+
+    const barPct = Math.min((salary / neededSalary) * 100, 100);
+    document.getElementById('barFill').style.width = barPct + '%';
+    document.getElementById('barOrig').textContent = formatEur(salary);
+    document.getElementById('barTarget').textContent = formatEur(neededSalary);
+
+    resultsEl.classList.add('visible');
+  }
+</script>
+
+</body>
+</html>
